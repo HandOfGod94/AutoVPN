@@ -30,9 +30,9 @@ spoonInstall.repos = {
     branch = "master",
   },
   handofgod = {
-    url = "https://github.com/HandOfGod94/AutoVPN/Spoons",
+    url = "https://github.com/HandOfGod94/AutoVPN",
     desc = "custom handofgod repos",
-    branch = "master"
+    branch = "main"
   }
 }
 
