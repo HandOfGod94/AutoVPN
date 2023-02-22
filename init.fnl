@@ -1,15 +1,24 @@
 (local otp (require :otp))
 
+(fn connect-scpt []
+  (table.concat ["tell application \"System Events\""
+                 "click menu bar item 1 of menu bar 1 of application process \"SystemUIServer\""
+                 "click menu item \"%s\" of menu 1 of menu bar item 1 of menu bar 1 of application process \"SystemUIServer\""
+                 "delay 3"
+                 "set value of text field 1 of window 1 of application process \"UserNotificationCenter\" to \"%s\""
+                 "click UI Element \"OK\" of window 1 of application process \"UserNotificationCenter\""
+                 "end tell]))"]))
+
 (fn connect [_keys {:title conn-name}]
   (let [totp (otp.new_totp_from_key (hs.settings.get :vpn-auth-token))]
-    (print (.. "connecting to " conn-name " with token " (totp:generate)))
-    (with-open [script (io.open (hs.spoons.resourcePath :resources/connect-vpn.scpt))]
-      (-> (script:read :*a)
-          (: :format conn-name (totp:generate))
-          (hs.osascript.applescript)
-          (match 
-            (true _ _) (print "Successfully connected to vpn")
-            (false _ {:NSLocalizedDescription message}) (print "failed to connect to vpn. reason: " message))))))
+    (print (.. "connecting to " conn-name " with otp " totp))
+    (-> (connect-scpt)
+        (: :format conn-name (totp:generate))
+        (hs.osascript.applescript)
+        (match (true _ _)
+          (print "Successfully connected to vpn")
+          (false _ {:NSLocalizedDescription message})
+          (print "failed to connect to vpn. reason: " message)))))
 
 (fn payload->conn-names [payload-content]
   (icollect [_ v (ipairs payload-content)]
@@ -57,4 +66,4 @@
 (fn start []
   (menubar:setMenu load-vpn-menus))
 
-{: init : start}
+{: init : start .name :AutoVPN}
