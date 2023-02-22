@@ -66,4 +66,4 @@
 (fn start []
   (menubar:setMenu load-vpn-menus))
 
-{: init : start .name :AutoVPN}
+{: init : start}
