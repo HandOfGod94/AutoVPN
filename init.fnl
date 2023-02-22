@@ -1,14 +1,27 @@
+(local otp (require :otp))
+
+(fn connect [_keys {:title conn-name}]
+  (let [totp (otp.new_totp_from_key (hs.settings.get :vpn-auth-token))]
+    (print (.. "connecting to " conn-name " with token " (totp:generate)))
+    (with-open [script (io.open (hs.spoons.resourcePath :resources/connect-vpn.scpt))]
+      (-> (script:read :*a)
+          (: :format conn-name (totp:generate))
+          (hs.osascript.applescript)
+          (match 
+            (true _ _) (print "Successfully connected to vpn")
+            (false _ {:NSLocalizedDescription message}) (print "failed to connect to vpn. reason: " message))))))
+
 (fn payload->conn-names [payload-content]
   (icollect [_ v (ipairs payload-content)]
     (?. v :UserDefinedName)))
 
 (fn conn-names->menubar-items [conn-names]
   (icollect [_ conn-name (ipairs conn-names)]
-    {:title (.. "Connect to " conn-name)}))
+    {:title (.. "Connect " conn-name) :fn connect}))
 
 (fn load-vpn-menus []
   (let [vpn-config-file (hs.settings.get :vpn-config-file)]
-    (when (not (= nil vpn-config-file))
+    (when (not= nil vpn-config-file)
       (with-open [config-file (io.open vpn-config-file)]
         (-> (config-file:read :*a)
             (string.match "(<plist.*</plist>)")

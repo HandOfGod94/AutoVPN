@@ -8,8 +8,7 @@ brew-deps:
 	brew install openssl@1.1
 
 lua-deps:
-	luarocks install lrexlib-PCRE2 PCRE2_DIR=/usr/local/Cellar/pcre2/10.40
-	luarocks install otp OPENSSL_DIR=/usr/local/Cellar/openssl@1.1/1.1.1q CRYPTO_DIR=/usr/local/Cellar/openssl@1.1/1.1.1q
+	luarocks install otp OPENSSL_DIR=/usr/local/Cellar/openssl@1.1/1.1.1t CRYPTO_DIR=/usr/local/Cellar/openssl@1.1/1.1.1t
 
 deps: brew-deps lua-deps
 
@@ -26,6 +25,7 @@ build: AutoVPN
 .PHONY: AutoVPN
 AutoVPN:
 	fennel --compile --require-as-include init.fnl > $(out_dir)/init.lua
+	cp -R resources/ $(out_dir)/resources
 
 package:
 	zip -o Spoons/$(app_name).spoon.zip $(out_dir)/* $(out_dir)/**/*
