@@ -28,7 +28,7 @@ AutoVPN:
 	cp docs/docs.json $(out_dir)/docs.json
 
 package:
-	zip -o Spoons/$(app_name).spoon.zip $(out_dir)/* $(out_dir)/**/*
+	zip -o Spoons/$(app_name).spoon.zip $(out_dir) $(out_dir)/* $(out_dir)/**/*
 
 install: build
 	cp -R $(app_name).spoon $(hammerspoon_dir)/Spoons/
