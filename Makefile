@@ -25,6 +25,7 @@ build: AutoVPN
 .PHONY: AutoVPN
 AutoVPN:
 	fennel --compile --require-as-include init.fnl > $(out_dir)/init.lua
+	cp docs/docs.json $(out_dir)/docs.json
 
 package:
 	zip -o Spoons/$(app_name).spoon.zip $(out_dir)/* $(out_dir)/**/*
