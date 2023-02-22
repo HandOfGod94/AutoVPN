@@ -20,7 +20,12 @@
     {:title (.. "Connect " conn-name) :fn connect}))
 
 (fn load-vpn-menus []
-  (let [vpn-config-file (hs.settings.get :vpn-config-file)]
+  (let [vpn-config-file (hs.settings.get :vpn-config-file)
+        static-menu [{:title "-"}
+                     {:title "Edit Preferences"
+                      :menu [{:title "Set .mobileconfig file"
+                              :fn set-mobileconfig-file}
+                             {:title "Set auth token" :fn set-auth-token}]}]]
     (when (not= nil vpn-config-file)
       (with-open [config-file (io.open vpn-config-file)]
         (-> (config-file:read :*a)
@@ -28,7 +33,8 @@
             (hs.plist.readString)
             (?. :PayloadContent)
             (payload->conn-names)
-            (conn-names->menubar-items))))))
+            (conn-names->menubar-items)
+            (hs.fnutils.concat static-menu))))))
 
 (fn set-mobileconfig-file [_keys _menuitem]
   (let [{:1 config-file} (hs.dialog.chooseFileOrFolder "Please select .mobileconfig file")]
@@ -43,15 +49,12 @@
     (print (.. "Auth Token" (hs.inspect vpn-auth-token)))
     (hs.settings.set :vpn-auth-token vpn-auth-token)))
 
+(local menubar (hs.menubar.new))
 (fn init []
-  (let [menubar (hs.menubar.new)
-        static-menu [{:title "-"}
-                     {:title "Edit Preferences"
-                      :menu [{:title "Set .mobileconfig file"
-                              :fn set-mobileconfig-file}
-                             {:title "Set auth token" :fn set-auth-token}]}]]
-    (menubar:setTitle :AutoVPN)
-    (menubar:setMenu (-> (load-vpn-menus)
-                         (hs.fnutils.concat static-menu)))))
+  (menubar:setTitle :AutoVPN)
+  (menubar:setMenu load-vpn-menus))
 
-{: init}
+(fn start []
+  (menubar:setMenu load-vpn-menus))
+
+{: init : start}
