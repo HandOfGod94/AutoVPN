@@ -19,6 +19,18 @@
   (icollect [_ conn-name (ipairs conn-names)]
     {:title (.. "Connect " conn-name) :fn connect}))
 
+
+(fn set-mobileconfig-file [_keys _menuitem]
+  (let [{:1 config-file} (hs.dialog.chooseFileOrFolder "Please select .mobileconfig file")]
+    (print (.. "VPN config file " (hs.inspect config-file)))
+    (hs.settings.set :vpn-config-file config-file)))
+
+(fn set-auth-token [_keys _menuitem]
+  (let [(_ vpn-auth-token) (hs.dialog.textPrompt "Auth Token"
+                                                 "Enter auth token to generate otp from")]
+    (print (.. "Auth Token" (hs.inspect vpn-auth-token)))
+    (hs.settings.set :vpn-auth-token vpn-auth-token)))
+
 (fn load-vpn-menus []
   (let [vpn-config-file (hs.settings.get :vpn-config-file)
         static-menu [{:title "-"}
@@ -35,17 +47,6 @@
             (payload->conn-names)
             (conn-names->menubar-items)
             (hs.fnutils.concat static-menu))))))
-
-(fn set-mobileconfig-file [_keys _menuitem]
-  (let [{:1 config-file} (hs.dialog.chooseFileOrFolder "Please select .mobileconfig file")]
-    (print (.. "VPN config file " (hs.inspect config-file)))
-    (hs.settings.set :vpn-config-file config-file)))
-
-(fn set-auth-token [_keys _menuitem]
-  (let [(_ vpn-auth-token) (hs.dialog.textPrompt "Auth Token"
-                                                 "Enter auth token to generate otp from")]
-    (print (.. "Auth Token" (hs.inspect vpn-auth-token)))
-    (hs.settings.set :vpn-auth-token vpn-auth-token)))
 
 (local menubar (hs.menubar.new))
 (fn init []
