@@ -7,9 +7,10 @@
       (-> (script:read :*a)
           (: :format conn-name (totp:generate))
           (hs.osascript.applescript)
-          (match 
-            (true _ _) (print "Successfully connected to vpn")
-            (false _ {:NSLocalizedDescription message}) (print "failed to connect to vpn. reason: " message))))))
+          (match (true _ _)
+            (print "Successfully connected to vpn")
+            (false _ {:NSLocalizedDescription message})
+            (print "failed to connect to vpn. reason: " message))))))
 
 (fn payload->conn-names [payload-content]
   (icollect [_ v (ipairs payload-content)]
@@ -41,8 +42,6 @@
     (print (.. "VPN config file " (hs.inspect config-file)))
     (hs.settings.set :vpn-config-file config-file)))
 
-;; TODO: figure out a way to reload once config is set
-
 (fn set-auth-token [_keys _menuitem]
   (let [(_ vpn-auth-token) (hs.dialog.textPrompt "Auth Token"
                                                  "Enter auth token to generate otp from")]
@@ -55,6 +54,9 @@
   (menubar:setMenu load-vpn-menus))
 
 (fn start []
-  (menubar:setMenu load-vpn-menus))
+  (menubar:setMenu load-vpn-menus)
+  (hs.settings.watchKey :autovpn-config-watcher :vpn-config-file
+                        (lambda []
+                          (menubar:setMenu load-vpn-menus))))
 
 {: init : start}
