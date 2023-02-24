@@ -10,7 +10,7 @@ Spoon to connect to VPN automatically
 
 ## Installation
 
-- manually using zip file
+### manually using zip file
 
 1. downlaod AutoVPN.spoon.zip file from ./Spoons dir and extract it in ~/.hammerspoon/Spoons
 2. In your hammerspoon `init.lua` add the snippet
@@ -19,7 +19,7 @@ Spoon to connect to VPN automatically
   autovpn.start()
   ```
 
-- using `SpoonInstall`
+### using `SpoonInstall`
 1. Add the snippet in `init.lua`
 ```lua
 local spoonInstall = hs.loadSpoon("SpoonInstall")
