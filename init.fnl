@@ -19,7 +19,6 @@
   (icollect [_ conn-name (ipairs conn-names)]
     {:title (.. "Connect " conn-name) :fn connect}))
 
-
 (fn set-mobileconfig-file [_keys _menuitem]
   (let [{:1 config-file} (hs.dialog.chooseFileOrFolder "Please select .mobileconfig file")]
     (print (.. "VPN config file " (hs.inspect config-file)))
@@ -27,7 +26,8 @@
 
 (fn set-auth-token [_keys _menuitem]
   (let [(_ vpn-auth-token) (hs.dialog.textPrompt "Auth Token"
-                                                 "Enter auth token to generate otp from")]
+                                                 "Enter auth token to generate otp from"
+                                                 "" :OK :Cacnel true)]
     (print (.. "Auth Token" (hs.inspect vpn-auth-token)))
     (hs.settings.set :vpn-auth-token vpn-auth-token)))
 
