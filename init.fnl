@@ -7,10 +7,9 @@
       (-> (script:read :*a)
           (: :format conn-name (totp:generate))
           (hs.osascript.applescript)
-          (match (true _ _)
-            (print "Successfully connected to vpn")
-            (false _ {:NSLocalizedDescription message})
-            (print "failed to connect to vpn. reason: " message))))))
+          (match 
+            (true _ _) (print "Successfully connected to vpn")
+            (false _ {:NSLocalizedDescription message}) (print "failed to connect to vpn. reason: " message))))))
 
 (fn payload->conn-names [payload-content]
   (icollect [_ v (ipairs payload-content)]
